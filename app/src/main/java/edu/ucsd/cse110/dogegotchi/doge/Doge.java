@@ -1,14 +1,19 @@
 package edu.ucsd.cse110.dogegotchi.doge;
 
 import android.util.Log;
+import android.widget.TableRow;
 
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import edu.ucsd.cse110.dogegotchi.R;
+import edu.ucsd.cse110.dogegotchi.daynightcycle.DayNightCycleMediator;
+import edu.ucsd.cse110.dogegotchi.daynightcycle.IDayNightCycleObserver;
 import edu.ucsd.cse110.dogegotchi.observer.ISubject;
 import edu.ucsd.cse110.dogegotchi.ticker.ITickerObserver;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Logic for our friendly, sophisticated doge.
@@ -17,7 +22,7 @@ import edu.ucsd.cse110.dogegotchi.ticker.ITickerObserver;
  *
  * TODO: Exercise 2 -- enable {@link State#SAD} mood, and add support for {@link State#EATING} behavior.
  */
-public class Doge implements ISubject<IDogeObserver>, ITickerObserver {
+public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNightCycleObserver {
     /**
      * Current number of ticks. Reset after every potential mood swing.
      */
@@ -37,6 +42,9 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver {
      * State of doge.
      */
     State state;
+
+    private DayNightCycleMediator dayNightCycleMediator;
+
 
     private Collection<IDogeObserver> observers;
 
@@ -71,6 +79,15 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver {
             tryRandomMoodSwing();
             this.numTicks = 0;
         }
+
+
+
+        if(this.state == State.EATING  && (this.numTicks % this.numTicksBeforeMoodSwing) == 0){
+            this.setState(State.HAPPY);
+        }
+
+
+
     }
 
     /**
@@ -80,6 +97,28 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver {
      */
     private void tryRandomMoodSwing() {
         // TODO: Exercise 1 -- Implement this method...
+        if(this.state == State.HAPPY) {
+            int prob = ThreadLocalRandom.current().nextInt(0, 101);
+            double percentProb = (double) prob / 100;
+            Log.i(this.getClass().getSimpleName(), "Doge prob is : " + percentProb);
+            Log.i(this.getClass().getSimpleName(), "Doge mood swing prob is : " + moodSwingProbability);
+
+            if (percentProb < moodSwingProbability) {
+                this.setState(State.SAD);
+
+               // observers.notify();
+
+
+                Log.i(this.getClass().getSimpleName(), "Doge state changed to: SAD ");
+            } else this.setState(State.HAPPY);
+
+            numTicks = 0;
+        }
+    }
+
+    public void eat(){
+        Log.v(this.getClass().getSimpleName(), "In Doge/eat method");
+        this.setState(State.EATING);
     }
 
     @Override
@@ -104,6 +143,19 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver {
         Log.i(this.getClass().getSimpleName(), "Doge state changed to: " + newState);
         for (IDogeObserver observer : this.observers) {
             observer.onStateChange(newState);
+        }
+    }
+
+    //Exercise 1
+    @Override
+    public void onPeriodChange(Period newPeriod) {
+        if(newPeriod == Period.DAY) {
+            Log.i(this.getClass().getSimpleName(), "Doge new day, changed to Happy state");
+            this.setState(State.HAPPY);
+        }
+        if(newPeriod == Period.NIGHT) {
+            Log.i(this.getClass().getSimpleName(), "Doge night time, changed to Sleeping state");
+            this.setState(State.SLEEPING);
         }
     }
 

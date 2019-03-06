@@ -18,9 +18,12 @@ import java.util.Map;
 import edu.ucsd.cse110.dogegotchi.daynightcycle.DayNightCycleMediator;
 import edu.ucsd.cse110.dogegotchi.doge.Doge;
 import edu.ucsd.cse110.dogegotchi.doge.DogeView;
+import edu.ucsd.cse110.dogegotchi.doge.IDogeObserver;
+import edu.ucsd.cse110.dogegotchi.observer.ISubject;
 import edu.ucsd.cse110.dogegotchi.sprite.Coord;
 import edu.ucsd.cse110.dogegotchi.ticker.AsyncTaskTicker;
 import edu.ucsd.cse110.dogegotchi.ticker.ITicker;
+import edu.ucsd.cse110.dogegotchi.ticker.ITickerObserver;
 
 /**
  * In reading this class observe how we use the xml resource files for
@@ -39,6 +42,8 @@ public class MainActivity extends Activity {
     private MediaPlayer dayPlayer;
 
     private MediaPlayer nightPlayer;
+
+    private EatingMediator mediator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +85,8 @@ public class MainActivity extends Activity {
 
         ticker.register(gameView);
         this.dayNightCycleMediator.register(gameView);
+        dayNightCycleMediator.register(this.doge);
+
 
         /**
          * TODO: Exercise 2 -- MVP
@@ -99,6 +106,33 @@ public class MainActivity extends Activity {
                           steakButton     = foodMenu.findViewById(R.id.SteakButton),
                           turkeyLegButton = foodMenu.findViewById(R.id.TurkeyLegButton);
         // hm... should prob do something with this
+
+        mediator = new EatingMediator(this.doge, foodMenu);
+
+        hamButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               mediator.changeToEat();
+           }
+       });
+
+        hamButton.setOnClickListener(foodMenu.);
+
+
+
+        steakButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediator.changeToEat();
+            }
+        });
+        turkeyLegButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediator.changeToEat();
+            }
+        });
+
 
         /**
          * TODO: Exercise 3 -- Strategy & Factory
@@ -153,6 +187,7 @@ public class MainActivity extends Activity {
         double moodSwingProbability = getResources().getInteger(R.integer.mood_swing_probability)/100.0;
         this.doge = new Doge(ticksPerMoodSwing, moodSwingProbability);
 
+
         // create Doge view
         Map<Doge.State, Bitmap> stateBitmaps = new HashMap<>();
         Map<Doge.State, Coord > stateCoords  = new HashMap<>();
@@ -170,6 +205,12 @@ public class MainActivity extends Activity {
                                   getResources().getInteger(R.integer.happy_y)));
 
         // TODO: Exercise 1 - set up sprite and coords for SAD state.
+        stateBitmaps.put(Doge.State.SAD,
+                BitmapFactory.decodeResource(getResources(), R.drawable.sad_2x));
+        stateCoords.put(Doge.State.SAD,
+                new Coord(getResources().getInteger(R.integer.sad_x),
+                        getResources().getInteger(R.integer.sad_y)));
+
         stateBitmaps.put(Doge.State.SLEEPING,
                          BitmapFactory.decodeResource(getResources(), R.drawable.sleeping_2x));
         stateCoords.put(Doge.State.SLEEPING,
@@ -177,6 +218,12 @@ public class MainActivity extends Activity {
                                   getResources().getInteger(R.integer.sleeping_y)));
 
         // TODO: Exercise 2 - Set up sprite and coords for EATING state.
+        stateBitmaps.put(Doge.State.EATING,
+                BitmapFactory.decodeResource(getResources(), R.drawable.eating_2x));
+        stateCoords.put(Doge.State.EATING,
+                new Coord(500,400));
+
+
         // TODO: Exercise 3 - You may need to create the Factory of Strategies here
         this.dogeView = new DogeView(this, Doge.State.HAPPY, stateBitmaps, stateCoords);
 
@@ -195,5 +242,41 @@ public class MainActivity extends Activity {
         }
         this.ticker.stop();
         super.onDestroy();
+    }
+
+    private class EatingMediator implements IDogeObserver{
+        View menu; //= findViewById(R.id.FoodMenuView);
+        Doge doge;
+
+        EatingMediator(Doge doge , View menu){
+            this.doge = doge;
+            this.menu = menu;
+
+            doge.register(this);
+        }
+
+        @Override
+        public void onStateChange(Doge.State newState) {
+            Log.v(this.getClass().getSimpleName(), "In onStateChange of Mediator");
+            if(newState == Doge.State.SAD){
+                Log.v(this.getClass().getSimpleName(), "In onStateChange/SadState of Mediator");
+
+                menu.setVisibility(View.VISIBLE);
+                menu.bringToFront();
+            }
+            if(newState == Doge.State.EATING){
+//                try {
+                    menu.setVisibility(View.GONE);
+//                    Thread.sleep(3000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        }
+
+        public void changeToEat(){
+            doge.eat();
+        }
+
     }
 }
