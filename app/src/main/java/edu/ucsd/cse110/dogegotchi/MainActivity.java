@@ -254,10 +254,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onStateChange(Doge.State newState) {
-            Log.v(this.getClass().getSimpleName(), "In onStateChange of Mediator");
             if(newState == Doge.State.SAD){
-                Log.v(this.getClass().getSimpleName(), "In onStateChange/SadState of Mediator");
-
                 menu.setVisibility(View.VISIBLE);
                 menu.bringToFront();
             }
