@@ -76,17 +76,15 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
 
         if (this.numTicks > 0
             && (this.numTicks % this.numTicksBeforeMoodSwing) == 0) {
-            tryRandomMoodSwing();
+            if(this.state == State.HAPPY || this.state == State.SAD) { //added Wed night.
+                tryRandomMoodSwing();
+            }
             this.numTicks = 0;
         }
-
-
 
         if(this.state == State.EATING  && (this.numTicks % this.numTicksBeforeMoodSwing) == 0){
             this.setState(State.HAPPY);
         }
-
-
 
     }
 
@@ -95,6 +93,9 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
      *
      * **Strictly follow** the Finite State Machine in the write-up.
      */
+
+
+
     private void tryRandomMoodSwing() {
         // TODO: Exercise 1 -- Implement this method...
         if(this.state == State.HAPPY) {
@@ -105,9 +106,6 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
 
             if (percentProb < moodSwingProbability) {
                 this.setState(State.SAD);
-
-               // observers.notify();
-
 
                 Log.i(this.getClass().getSimpleName(), "Doge state changed to: SAD ");
             } else this.setState(State.HAPPY);

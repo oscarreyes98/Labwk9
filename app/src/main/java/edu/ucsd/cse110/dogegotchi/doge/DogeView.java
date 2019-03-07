@@ -2,6 +2,7 @@ package edu.ucsd.cse110.dogegotchi.doge;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -54,7 +55,7 @@ public class DogeView
     @Override
     public void onStateChange(Doge.State newState) {
         checkState(newState); // x-cutting concern
-
+        Log.d(this.getClass().getSimpleName(), " In DogeView, actually setting state to: " + newState);
         // update super sprite
         this.setSprite(this.viewsPerState.get(newState));
         this.setCoord(this.coordsPerState.get(newState));

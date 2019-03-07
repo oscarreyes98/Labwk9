@@ -31,7 +31,6 @@
             android:contentDescription="Feed doge with Ham."
             android:scaleType="centerInside"
             android:src="@drawable/ham_2x"
-            android:onClick=""
             tools:src="@drawable/ham_2x" />
 
         <ImageButton

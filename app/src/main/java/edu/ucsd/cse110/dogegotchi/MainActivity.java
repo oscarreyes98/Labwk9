@@ -109,17 +109,14 @@ public class MainActivity extends Activity {
 
         mediator = new EatingMediator(this.doge, foodMenu);
 
+
+
         hamButton.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               mediator.changeToEat();
-           }
-       });
-
-        hamButton.setOnClickListener(foodMenu.);
-
-
-
+            @Override
+            public void onClick(View v) {
+                mediator.changeToEat();
+            }
+        });
         steakButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -275,6 +272,7 @@ public class MainActivity extends Activity {
         }
 
         public void changeToEat(){
+            Log.v(this.getClass().getSimpleName(), "In mediator/changeToEat");
             doge.eat();
         }
 
