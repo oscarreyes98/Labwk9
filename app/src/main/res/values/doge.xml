@@ -20,5 +20,5 @@
     <integer name="mood_swings_per_period">3</integer>
 
     <!-- Probability of a mood swing. Integer range: [0,100) -->
-    <integer name="mood_swing_probability">50</integer>
+    <integer name="mood_swing_probability">80</integer>
 </resources>

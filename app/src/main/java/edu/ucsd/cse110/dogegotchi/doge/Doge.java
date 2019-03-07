@@ -76,15 +76,22 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
 
         if (this.numTicks > 0
             && (this.numTicks % this.numTicksBeforeMoodSwing) == 0) {
-            if(this.state == State.HAPPY || this.state == State.SAD) { //added Wed night.
                 tryRandomMoodSwing();
-            }
-            this.numTicks = 0;
+                this.numTicks = 0;
         }
 
-        if(this.state == State.EATING  && (this.numTicks % this.numTicksBeforeMoodSwing) == 0){
-            this.setState(State.HAPPY);
+        if(this.state == State.EATING){
+            Log.d(this.getClass().getSimpleName(), "in on tick - eating");
+            Log.d(this.getClass().getSimpleName(), "num ticks =" + this.numTicks );
+            if (this.numTicks > 0
+                    && (this.numTicks % 2) == 0){
+                Log.d(this.getClass().getSimpleName(), "going from eating to happy");
+                this.setState(State.HAPPY);
+                this.numTicks = 0;
+            }
         }
+
+
 
     }
 
@@ -93,8 +100,6 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
      *
      * **Strictly follow** the Finite State Machine in the write-up.
      */
-
-
 
     private void tryRandomMoodSwing() {
         // TODO: Exercise 1 -- Implement this method...
@@ -112,6 +117,11 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
 
             numTicks = 0;
         }
+
+//        if(this.state == State.EATING){
+//            this.setState(State.HAPPY);
+//            this.numTicks = 0;
+//        }
     }
 
     public void eat(){
@@ -151,8 +161,9 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
             Log.i(this.getClass().getSimpleName(), "Doge new day, changed to Happy state");
             this.setState(State.HAPPY);
         }
-        if(newPeriod == Period.NIGHT) {
+        if(newPeriod == Period.NIGHT && this.state != State.EATING) {
             Log.i(this.getClass().getSimpleName(), "Doge night time, changed to Sleeping state");
+
             this.setState(State.SLEEPING);
         }
     }
