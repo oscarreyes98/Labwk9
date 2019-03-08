@@ -222,6 +222,7 @@ public class MainActivity extends Activity {
 
 
         // TODO: Exercise 3 - You may need to create the Factory of Strategies here
+
         this.dogeView = new DogeView(this, Doge.State.HAPPY, stateBitmaps, stateCoords);
 
         // make the doge view observe doge's mood swings
@@ -274,4 +275,6 @@ public class MainActivity extends Activity {
         }
 
     }
+
+
 }

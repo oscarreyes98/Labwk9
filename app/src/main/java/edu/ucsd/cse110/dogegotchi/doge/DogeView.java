@@ -2,6 +2,9 @@ package edu.ucsd.cse110.dogegotchi.doge;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 
 import com.google.common.base.Preconditions;
@@ -60,6 +63,30 @@ public class DogeView
         this.setSprite(this.viewsPerState.get(newState));
         this.setCoord(this.coordsPerState.get(newState));
     }
+
+//    @Override
+//    public void draw(Canvas canvas){
+//        //TODO Exercise 3 - Override draw (Neel)
+//        if(newState == Doge.State.EATING){
+//
+//        }
+//
+//        else if(newState == Doge.State.SAD){
+//
+//        }
+//
+//        else if(newState == Doge.State.HAPPY){
+//
+//        }
+//
+//        else if(newState == Doge.State.SLEEPING){
+//            Paint paint = new Paint();
+//            canvas.drawPaint(paint);
+//            paint.setColor(Color.BLACK);
+//            paint.setTextSize(16);
+//            canvas.drawText("ZZZ...", x, y, paint);
+//        }
+//    }
 
     /**
      * Make sure that a sprite and coordinates were registered to the given state.
