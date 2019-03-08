@@ -45,6 +45,8 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
 
     private DayNightCycleMediator dayNightCycleMediator;
 
+    private Period currP;
+
 
     private Collection<IDogeObserver> observers;
 
@@ -71,10 +73,12 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
     }
 
     int ticks = 0;
+    int ticksSleep = 0;
     @Override
     public void onTick() {
         this.numTicks++;
         this.ticks++;
+        this.ticksSleep++;
 
         if (this.numTicks > 0
             && (this.numTicks % this.numTicksBeforeMoodSwing) == 0) {
@@ -88,7 +92,11 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
             this.ticks = 0;
         }
 
-
+        if(currP == Period.NIGHT && this.state == State.HAPPY && (this.ticksSleep % 7)==0){
+            Log.d(this.getClass().getSimpleName(), "Doge is happy at night, wait, set to sleep");
+            this.setState(State.SLEEPING);
+            ticksSleep = 0;
+        }
 
     }
 
@@ -100,7 +108,7 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
 
     private void tryRandomMoodSwing() {
         // TODO: Exercise 1 -- Implement this method...
-        if(this.state == State.HAPPY) {
+        if(this.state == State.HAPPY && currP == Period.DAY) {
             int prob = ThreadLocalRandom.current().nextInt(0, 101);
             double percentProb = (double) prob / 100;
             Log.i(this.getClass().getSimpleName(), "Doge prob is : " + percentProb);
@@ -150,24 +158,20 @@ public class Doge implements ISubject<IDogeObserver>, ITickerObserver, IDayNight
     @Override
     public void onPeriodChange(Period newPeriod) {
         if(newPeriod == Period.DAY) {
+            currP = Period.DAY;
             Log.i(this.getClass().getSimpleName(), "Doge new day, changed to Happy state");
             this.setState(State.HAPPY);
         }
         if(newPeriod == Period.NIGHT ) {
+            currP = Period.NIGHT;
             Log.i(this.getClass().getSimpleName(), "Doge night time, changed to Sleeping state");
 
 
             if (this.state == State.EATING){
-//                try {
                     this.setState(State.HAPPY);
-//                    Thread.sleep(8500);
-//                    Log.v(this.getClass().getSimpleName(), "in Doge/onPChange/Was eating, now happy b4 sleep");
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-
+                    Log.v(this.getClass().getSimpleName(), "Setting Doge as Happy at night");
             }
-            this.setState(State.SLEEPING);
+            else this.setState(State.SLEEPING);
         }
     }
 
